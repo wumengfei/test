@@ -25,7 +25,7 @@ void CGPS::GeodeticToCartesian (PCRDCARTESIAN pcc, PCRDGEODETIC pcg)
 	double m;//保存lcosB
 	double q2;//卯酉圈的分量 的平方
 	double M,N;//子午，卯酉圈曲半径
-	double S;//子午线弧长
+	double S;//子午线弧长 是不是要求的距离呢？
 	double A0,B0,C0,D0,E0;
 	double n;//投影带号
 	double a_1_e2;//a*(1-e*e)的值

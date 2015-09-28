@@ -107,7 +107,7 @@ struct GPS reading_gps()
 
    memset(buff_gps,0,sizeof(buff_gps));
    read(fd_gps,buff_gps,BUF_SIZE);
-   if((gprmc = strstr(buff_gps,"$GPRMC")) != NULL)
+   if((gprmc = strstr(buff_gps,"$GPRMC")) != NULL)//GPRMC有什么特殊意义？文件格式？
    {
        int nthComma = 0;
        char *p;

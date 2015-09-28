@@ -17,6 +17,7 @@ double cal_lossrate(int *head_num_p, int *good_num, int total_num)
 {
 	double lossrate = -1;
 	if (*head_num_p == -1)
+        //what's the purpose?
 		*head_num_p = total_num - 1;
 	total_num = total_num - *head_num_p;
 
@@ -32,7 +33,7 @@ double cal_lossrate(int *head_num_p, int *good_num, int total_num)
 /*calculate throughput*/
 void cal_throughput(int sig)
 {
-	thrput = (double)count_thrput * (double)pksize * 8 / (1000000 * THR_INTERVAL);
+	thrput = (double)count_thrput * (double)pksize * 8 / (1000000 * THR_INTERVAL);//bit/s
 	count_thrput = 0;
 	alarm(THR_INTERVAL);
 	return;
@@ -45,7 +46,7 @@ double radian(double d)
 double cal_distan(double lat, double lon, double lat_r, double lon_r)
 {
     double dst;
-    double radLat1 = radian(lat);
+    double radLat1 = radian(lat);//纬度
     double radLat2 = radian(lat_r);
     double a = radLat1 - radLat2;
     double b = radian(lon) - radian(lon_r);
