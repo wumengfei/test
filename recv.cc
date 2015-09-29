@@ -9,7 +9,7 @@
 #include <sys/socket.h>
 #include <netpacket/packet.h>
 #include <sys/time.h>
-#include "gps.h"
+#include "./GPS/GPS.h"
 #include "public.h"
 
 #define IF_NAME "wlan1" // if_name of ath5k network card
@@ -27,7 +27,7 @@ int main(int argc, char * argv[])
 	pthread_t gps_thread;
 	//create pthread for gps
     //这里用到了gps.c文件中的*gpsinfo(*m)，需要替换
-	if(pthread_create(&gps_thread,NULL,gpsinfo,NULL) == -1){
+	if(pthread_create(&gps_thread,NULL,reading_gps(),NULL) == -1){
 		perror("Create gps thread");
 		return -1;
 	}

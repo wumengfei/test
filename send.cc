@@ -32,7 +32,7 @@ throughput	Mb per sec
 #include <sys/time.h>
 #include <pthread.h>
 #include <signal.h>
-#include "gps.h"
+#include "./GPS/GPS.h"
 #include "public.h"
 
 #define IF_NAME "wlan1" // if_name of ath5k network card
@@ -339,7 +339,7 @@ int main(int argc, char *argv[])
 	//timer for 3s
 	alarm(THR_INTERVAL);
 	//create pthread for gps
-	if(pthread_create(&gps_thread,NULL,gpsinfo,NULL) == -1){
+	if(pthread_create(&gps_thread,NULL,reading_gps(),NULL) == -1){
 		perror("Create gps thread");
 		return -1;
 	}

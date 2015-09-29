@@ -1,4 +1,4 @@
-﻿#include "GPS.h"
+#include "GPS.h"
 #include "./OBD/obd.h"
 #include <stdio.h>
 #include <fcntl.h>
@@ -95,7 +95,7 @@ int set_para()
     }
     return 0;
 }
-
+//需要替换的部分
 struct GPS reading_gps()
 {
 
