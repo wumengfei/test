@@ -1,10 +1,13 @@
-﻿#ifndef GPS_H
+#ifndef GPS_H
 #define GPS_H
 
 #include <pthread.h>
 
 #define BUF_SIZE 1024
 #define GPS_INTERVAL 10//Interval of reading(ms)
+//#define TIMELEN 11
+//#define LATITUDELEN 12
+//#define LONGITUDELEN 13
 
 struct GPS
 {
@@ -43,6 +46,11 @@ extern pthread_t pgps_t;
 extern int fd_gps;//File descriptor
 extern struct GPS gps_info;//Global GPS information
 extern const char *dev_path;//GPS device file path
+
+//清华板子的部分
+extern double time_v, double lat_v, double lon_v;
+extern double direction_v;
+extern double speed_v;
 
 void cthread_gps();//Create thread to read GPS continously
 void display_gps();

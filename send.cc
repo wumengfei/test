@@ -56,11 +56,18 @@ struct test_struct{
 	long int tv_sec;
 	long int tv_usec;
 	
-	char time[TIMELEN];
-	char lat[LATITUDELEN];
-	char lon[LONGITUDELEN];
-	float speed;
-	char direction[8];
+    struct GPS newgps_info;
+    double time;
+    double latitude;
+    double longitude;
+    double speed;
+    double direction;
+    
+//	char time[TIMELEN];
+//	char lat[LATITUDELEN];
+//	char lon[LONGITUDELEN];
+//	float speed;
+//	char direction[8];
 	char extra[MTU];
 };
 
@@ -112,14 +119,20 @@ void *send(void *arg)
 
 	while (1){
 		gettimeofday(&tv_send,NULL);
-		memcpy(data_t.time, time_v, sizeof(time_v));
-		memcpy(data_t.lat, lat_v, sizeof(lat_v));
-		memcpy(data_t.lon, lon_v, sizeof(lon_v));
-		data_t.speed = speed_v;
-		memcpy(data_t.direction, direction_v, sizeof(direction_v));	
+        data_t.newgps_info.time = time_v;
+        data_t.newgps_info.latitude = lat_v;
+        data_t.newgps_info.longitude = lon_v;
+        data_t.newgps_info.speed = speed_v;
+        data_t.newgps_info.direction = direction_v;
+//		memcpy(data_t.newgps_info.time, time_v, sizeof(time_v));
+//		memcpy(data_t.newgps_info.latitude, lat_v, sizeof(lat_v));
+//		memcpy(data_t.newgps_info.longitude, lon_v, sizeof(lon_v));
+//		data_t.newgps_info.speed = speed_v;
+//		memcpy(data_t.direction, direction_v, sizeof(direction_v));	
 		data_t.count_t = ++count_t;
 		data_t.tv_sec = tv_send.tv_sec;
 		data_t.tv_usec = tv_send.tv_usec;
+        
 
 		printf("T: flag=%c, size=%d, interval=%d, count_t=%d, sec_t=%ld, usec_t=%ld, time=%s, lat=%s, lon=%s, speed=%.2f, direction=%s\n", 
 			data_t.flag,
@@ -128,11 +141,11 @@ void *send(void *arg)
 			data_t.count_t,
 			data_t.tv_sec,
 			data_t.tv_usec,
-			data_t.time,
-			data_t.lat,
-			data_t.lon,
-			data_t.speed,
-			data_t.direction);
+			data_t.newgps_info.time,
+			data_t.newgps_info.latitude,
+			data_t.newgps_info.longitude,
+			data_t.newgps_info.speed,
+			data_t.newgps_info.direction);
    		
 		/*// transform
 		data_t.size = htons(data_t.size);
@@ -181,7 +194,7 @@ void *rcv(void *arg)
 	int rx_good_num = 0;
 	char *rcv_buf = (char *)malloc(arg1->size);
 	FILE *fp;
-	struct timeval time_r;	
+	struct timeval time_r;
 	struct ifreq ifstruct;
 	/*socket address struct*/
 	sockaddr_ll rcv_sll;
@@ -260,11 +273,11 @@ void *rcv(void *arg)
 						data_r.tv_usec,
 						time_r.tv_sec,
 						time_r.tv_usec,
-						data_r.time,
-						data_r.lat,
-						data_r.lon,
-						data_r.speed,
-						data_r.direction);
+						data_r.newgps_info.time,
+						data_r.newgps_info.latitude,
+						data_r.newgps_info.longitude,
+						data_r.newgps_info.speed,
+						data_r.newgps_info.direction);
 				printf("throughtput is %.3f\n",thrput);
 
 				if(fprintf(fp,"size=%d, interval=%d, count_t=%d, count_r=%d, sec_t=%ld, usec_t=%ld, sec_r=%ld, usec_r=%ld, thrput=%.3f, RTT=%.3f, loss rate=%.2f, dis=%f\n",
@@ -279,7 +292,7 @@ void *rcv(void *arg)
 						thrput,
 						cal_latency(data_r.tv_sec,data_r.tv_usec,time_r.tv_sec,time_r.tv_usec),
 						cal_lossrate(&rx_head_num,&data_r.count_r,data_r.count_t),
-						cal_distan(atof(data_r.lat), atof(data_r.lon), atof(lat_v), atof(lon_v)))<0){
+						cal_distan(atof(data_r.newgps_info.latitude), atof(data_r.newgps_info.longitude), atof(lat_v), atof(lon_v)))<0){
 							perror("fprintf");
 							close(rawfd);
 							fclose(fp);
@@ -339,7 +352,8 @@ int main(int argc, char *argv[])
 	//timer for 3s
 	alarm(THR_INTERVAL);
 	//create pthread for gps
-	if(pthread_create(&gps_thread,NULL,reading_gps(),NULL) == -1){
+    set_para();//开启gps线程前有一步骤设置参数
+	if(pthread_create(&gps_thread,NULL,reading_gps,NULL) == -1){
 		perror("Create gps thread");
 		return -1;
 	}
