@@ -134,7 +134,7 @@ void *send(void *arg)
 		data_t.tv_usec = tv_send.tv_usec;
         
 
-		printf("T: flag=%c, size=%d, interval=%d, count_t=%d, sec_t=%ld, usec_t=%ld, time=%s, lat=%s, lon=%s, speed=%.2f, direction=%s\n", 
+		printf("T: flag=%c, size=%d, interval=%d, count_t=%d, sec_t=%ld, usec_t=%ld, time=%f, lat=%f, lon=%f, speed=%.2f, direction=%f\n", 
 			data_t.flag,
 			data_t.size,
 			data_t.interval,
@@ -263,7 +263,7 @@ void *rcv(void *arg)
 				//rx_good_num ++;
 				/*calculate throughput*/
 				count_thrput ++;	
-				printf("R: flag=%c, size=%d, interval=%d, count_t=%d, count_r=%d,sec_t=%ld, usec_t=%ld, sec_r=%ld, usec_r=%ld, time=%s, lat=%s, lon=%s, speed=%.2f, direction=%s\n", 
+				printf("R: flag=%c, size=%d, interval=%d, count_t=%d, count_r=%d,sec_t=%ld, usec_t=%ld, sec_r=%ld, usec_r=%ld, time=%f, lat=%f, lon=%f, speed=%.2f, direction=%f\n", 
 						data_r.flag,
 						data_r.size,
 						data_r.interval,
@@ -292,7 +292,7 @@ void *rcv(void *arg)
 						thrput,
 						cal_latency(data_r.tv_sec,data_r.tv_usec,time_r.tv_sec,time_r.tv_usec),
 						cal_lossrate(&rx_head_num,&data_r.count_r,data_r.count_t),
-						cal_distan(atof(data_r.newgps_info.latitude), atof(data_r.newgps_info.longitude), atof(lat_v), atof(lon_v)))<0){
+						cal_distan(data_r.newgps_info.latitude, data_r.newgps_info.longitude, lat_v, lon_v))<0){
 							perror("fprintf");
 							close(rawfd);
 							fclose(fp);
@@ -352,8 +352,8 @@ int main(int argc, char *argv[])
 	//timer for 3s
 	alarm(THR_INTERVAL);
 	//create pthread for gps
-    set_para();//开启gps线程前有一步骤设置参数
-	if(pthread_create(&gps_thread,NULL,reading_gps,NULL) == -1){
+        set_para();//开启gps线程前有一步骤设置参数
+	if(pthread_create(&gps_thread,NULL,(void *)reading_gps,NULL) == -1){
 		perror("Create gps thread");
 		return -1;
 	}

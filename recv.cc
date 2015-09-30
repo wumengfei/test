@@ -27,7 +27,7 @@ int main(int argc, char * argv[])
 	pthread_t gps_thread;
 	//create pthread for gps
     //这里用到了gps.c文件中的*gpsinfo(*m)，需要替换
-	if(pthread_create(&gps_thread,NULL,reading_gps(),NULL) == -1){
+	if(pthread_create(&gps_thread,NULL,(void *)reading_gps(),NULL) == -1){
 		perror("Create gps thread");
 		return -1;
 	}
@@ -41,12 +41,13 @@ int main(int argc, char * argv[])
 		long int tv_sec;
 		long int tv_usec;
 	
-		char time[TIMELEN];
-		char lat[LATITUDELEN];
-		char lon[LONGITUDELEN];
-		float speed;
-		char direction[8];
-		char extra[MTU];	
+        struct GPS newgps_info;
+//		char time[TIMELEN];
+//		char lat[LATITUDELEN];
+//		char lon[LONGITUDELEN];
+//		float speed;
+//		char direction[8];
+		char extra[MTU];
 	};
      
 	struct ifreq ifstruct;
@@ -124,7 +125,7 @@ int main(int argc, char * argv[])
 			printf("recv!\n");//debug
 			/*if packet from sender*/
 			if (data_r.flag == 't'){	
-				printf("R: flag=%c, size=%d, interval=%d, count_t=%d, count_r=%d, sec_t=%ld, usec_t=%ld, time=%s, lat=%s, lon=%s, speed=%.2f, direction=%s\n", 
+				printf("R: flag=%c, size=%d, interval=%d, count_t=%d, count_r=%d, sec_t=%ld, usec_t=%ld, time=%f, lat=%f, lon=%f, speed=%.2f, direction=%f\n",
 					data_r.flag,
 					data_r.size,
 					data_r.interval,
@@ -132,11 +133,11 @@ int main(int argc, char * argv[])
 					data_r.count_r,
 					data_r.tv_sec,
 					data_r.tv_usec,
-					data_r.time,
-					data_r.lat,
-					data_r.lon,
-					data_r.speed,
-					data_r.direction);
+					data_r.newgps_info.time,
+					data_r.newgps_info.latitude,
+					data_r.newgps_info.longitude,
+					data_r.newgps_info.speed,
+					data_r.newgps_info.direction);
 				
 				data_t.flag = 'r';
 				data_t.count_r = ++count;
@@ -147,11 +148,16 @@ int main(int argc, char * argv[])
 					rx_head_num = -1;
 				}
 				rx_good_num++;
-				memcpy(data_t.time, time_v, sizeof(time_v));
-				memcpy(data_t.lat, lat_v, sizeof(lat_v));
-				memcpy(data_t.lon, lon_v, sizeof(lon_v));
-				data_t.speed = speed_v;
-				memcpy(data_t.direction, direction_v, sizeof(direction_v));
+                data_t.newgps_info.time = time_v;
+                data_t.newgps_info.latitude = lat_v;
+                data_t.newgps_info.longitude = lon_v;
+                data_t.newgps_info.speed = speed_v;
+                data_t.newgps_info.direction = direction_v;
+//				memcpy(data_t.time, time_v, sizeof(time_v));
+//				memcpy(data_t.lat, lat_v, sizeof(lat_v));
+//				memcpy(data_t.lon, lon_v, sizeof(lon_v));
+//				data_t.speed = speed_v;
+//				memcpy(data_t.direction, direction_v, sizeof(direction_v));
 				// transform
 				/*data_r.size = htons(data_r.size);
 				data_r.interval = htons(data_r.interval);
@@ -178,7 +184,7 @@ int main(int argc, char * argv[])
 						data_r.tv_usec,
 						thrput,
 						cal_lossrate(&rx_head_num,&rx_good_num,data_r.count_t),
-						cal_distan(atof(data_r.lat), atof(data_r.lon), atof(lat_v), atof(lon_v)))<0){
+						cal_distan(data_r.newgps_info.latitude, data_r.longitude, lat_v, lon_v))<0){
 							perror("fprintf");
 							close(rawfd);
 							fclose(fp);
