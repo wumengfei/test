@@ -96,7 +96,8 @@ int set_para()
     return 0;
 }
 //需要替换的部分
-struct GPS reading_gps()
+//struct GPS reading_gps()
+void * reading_gps()
 {
 
    char* commaPos[13] = {0};
@@ -150,7 +151,7 @@ struct GPS reading_gps()
 
        //qDebug()<<"gps_info="<<gps_info.status<<gps_info.lat_N_S<<gps_info.lng_E_W<<"time="<<Gtime;
    }
-   return gps_info;
+   //return gps_info;
 }
 
 void display_gps()

@@ -45,6 +45,7 @@ struct GPS
 extern pthread_t pgps_t;
 extern int fd_gps;//File descriptor
 extern struct GPS gps_info;//Global GPS information
+extern struct GPS newgps_info;
 extern const char *dev_path;//GPS device file path
 
 //清华板子的部分

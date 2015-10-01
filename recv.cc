@@ -27,7 +27,7 @@ int main(int argc, char * argv[])
 	pthread_t gps_thread;
 	//create pthread for gps
     //这里用到了gps.c文件中的*gpsinfo(*m)，需要替换
-	if(pthread_create(&gps_thread,NULL,(void *)reading_gps(),NULL) == -1){
+	if(pthread_create(&gps_thread,NULL,reading_gps(),NULL) == -1){
 		perror("Create gps thread");
 		return -1;
 	}

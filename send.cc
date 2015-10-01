@@ -57,11 +57,11 @@ struct test_struct{
 	long int tv_usec;
 	
     struct GPS newgps_info;
-    double time;
-    double latitude;
-    double longitude;
-    double speed;
-    double direction;
+//    double time;
+//    double latitude;
+//    double longitude;
+//    double speed;
+//    double direction;
     
 //	char time[TIMELEN];
 //	char lat[LATITUDELEN];
@@ -353,7 +353,7 @@ int main(int argc, char *argv[])
 	alarm(THR_INTERVAL);
 	//create pthread for gps
         set_para();//开启gps线程前有一步骤设置参数
-	if(pthread_create(&gps_thread,NULL,(void *)reading_gps,NULL) == -1){
+	if(pthread_create(&gps_thread,NULL,reading_gps,NULL) == -1){
 		perror("Create gps thread");
 		return -1;
 	}
